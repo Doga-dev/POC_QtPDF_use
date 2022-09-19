@@ -10,7 +10,10 @@ Rectangle {
     implicitHeight: 600
     color: "#ddeeff"
 
-    PdfDoc { id: doc }
+    PdfDoc {
+        id: doc
+        onPageChanged: idPage.update();
+    }
 
     RowLayout {
         id: idCommands
@@ -19,12 +22,12 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: 8
-        activeFocusOnTab: true
 
-        Item {
+        Rectangle {
             id: itemFilename
             Layout.fillWidth: true
             height: parent.height
+            color: "transparent"
 
             Label {
                 id: labelFilename
@@ -33,6 +36,8 @@ Rectangle {
                 anchors.margins: 0
                 height: parent.height / 4
                 text: qsTr("Filename")
+                fontSizeMode: Text.HorizontalFit
+                minimumPixelSize: 8
             }
 
             TextInput {
@@ -40,8 +45,8 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.top: labelFilename.bottom
                 anchors.bottom: parent.bottom
-                anchors.right: parent
-                text: "/home/doga/dev/demo_files/pdf/000000000002-20210120-154238-PV_OK.pdf"
+                anchors.right: parent.right
+                text: "/home/doga/Downloads/testPdf12pages.pdf"
                 font.pixelSize: height / 2
             }
         }
@@ -89,7 +94,7 @@ Rectangle {
             id: textPageNumber
             height: parent.height
             width: height
-            text: doc.pageNumber + " / " + doc.pageCount
+            text: (doc.pageNumber + 1) + " / " + doc.pageCount
         }
 
         Button {
@@ -107,15 +112,15 @@ Rectangle {
         }
     }
 
-    Image {
+    PdfImage {
         id: idPage
         anchors.left: parent.left
         anchors.top: idCommands.bottom
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: 8
-        source: doc.page
-        fillMode: Image.PreserveAspectFit
+        image: doc.page
+        smooth: true
     }
 
     Text {

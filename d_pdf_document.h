@@ -30,8 +30,8 @@ public:
     Q_PROPERTY(QString              errorMessage    READ errorMessage                           NOTIFY errorCodeChanged)
     Q_PROPERTY(int                  pageCount       READ pageCount                              NOTIFY pageCountChanged)
     Q_PROPERTY(int                  pageNumber      READ pageNumber     WRITE setPageNumber     NOTIFY pageNumberChanged)
-    Q_PROPERTY(bool                 isFirstPage     READ isFirstPage                            NOTIFY isFirstPageChanged)
-    Q_PROPERTY(bool                 isLastPage      READ isLastPage                             NOTIFY isLastPageChanged)
+    Q_PROPERTY(bool                 isFirstPage     READ isFirstPage                            NOTIFY pageChanged)
+    Q_PROPERTY(bool                 isLastPage      READ isLastPage                             NOTIFY pageChanged)
     Q_PROPERTY(QImage               page            READ page                                   NOTIFY pageChanged)
 
     explicit            DPdfDocument        (QObject * parent = nullptr);
@@ -46,13 +46,13 @@ public:
 
     int                 pageCount           () const    {   return m_pageCount;     }
     int                 pageNumber          () const    {   return m_pageNumber;    }
-    bool                isFirstPage         () const    {   return m_pageNumber <= 1;   }
-    bool                isLastPage          () const    {   return m_pageNumber == m_pageCount;   }
-    QImage              page                () const    {   return m_page;          }
+    bool                isFirstPage         () const    {   return m_pageNumber <= 0;   }
+    bool                isLastPage          () const    {   return m_pageNumber >= m_pageCount - 1;   }
+    QImage              page                () const    {   return m_page;  }
 
 public slots:
     void                setPageNumber       (int pageNumber);
-    void                goToFirstPage       ()          {   setPageNumber(1);                   }
+    void                goToFirstPage       ()          {   setPageNumber(0);                   }
     void                goToPreviousPage    ()          {   setPageNumber(m_pageNumber - 1);    }
     void                goToNextPage        ()          {   setPageNumber(m_pageNumber + 1);    }
     void                goToLastPage        ()          {   setPageNumber(m_pageCount);         }
@@ -62,9 +62,7 @@ signals:
     void                errorCodeChanged    ();
     void                pageCountChanged    (int pageCount);
     void                pageNumberChanged   (int pageNumber);
-    void                isFirstPageChanged  (bool isFirstPage);
-    void                isLastPageChanged   (bool isLastPage);
-    void                pageChanged         (const QImage & page);
+    void                pageChanged         ();
 
 private slots:
     void                setStatus           (int status);

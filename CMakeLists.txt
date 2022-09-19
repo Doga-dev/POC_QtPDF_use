@@ -33,12 +33,14 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Pdf REQUIRED)
 
 set(HEADER_FILES
     d_pdf_document.h
+    d_pdf_image.h
     inc_pdf_doc.h
 )
 
 set(SOURCE_FILES
-    main.cpp
     d_pdf_document.cpp
+    d_pdf_image.cpp
+    main.cpp
 )
 
 set(RESOURCE_FILES

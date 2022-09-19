@@ -7,7 +7,7 @@ DPdfDocument::DPdfDocument(QObject * parent) : QObject(parent)
   , m_error(0)
   , m_document(nullptr)
   , m_pageCount(0)
-  , m_pageNumber(0)
+  , m_pageNumber(-1)
   , m_page()
 {
     m_document = new QPdfDocument();
@@ -54,6 +54,7 @@ bool DPdfDocument::load(const QString & filePath)
     if (doneOk) {
         setPageCount(m_document->pageCount());
     }
+    setPage();
     return doneOk;
 }
 
@@ -62,6 +63,7 @@ bool DPdfDocument::close()
     bool doneOk = m_document;
     if (doneOk) {
         m_document->close();
+        m_pageNumber = -1;
     }
     return doneOk;
 }
@@ -70,10 +72,10 @@ void DPdfDocument::setPageNumber(int pageNumber)
 {
     int nextPageNumber = ((m_pageCount == 0)
                           ? 0
-                          : ((pageNumber < 1 )
-                             ? 1
-                             : ((pageNumber > m_pageCount)
-                                ? m_pageCount
+                          : ((pageNumber < 0 )
+                             ? 0
+                             : ((pageNumber >= m_pageCount)
+                                ? m_pageCount - 1
                                 : pageNumber)));
 
     if (m_pageNumber == nextPageNumber)
@@ -81,8 +83,6 @@ void DPdfDocument::setPageNumber(int pageNumber)
 
     m_pageNumber = nextPageNumber;
     emit pageNumberChanged(m_pageNumber);
-    emit isFirstPageChanged(isFirstPage());
-    emit isLastPageChanged(isLastPage());
     setPage();
 }
 
@@ -114,7 +114,11 @@ void DPdfDocument::setPageCount(int pageCount)
 
     m_pageCount = pageCount;
     emit pageCountChanged(m_pageCount);
-    goToFirstPage();
+    if (m_pageNumber != 0) {
+        goToFirstPage();
+    } else {
+        emit pageChanged();
+    }
 }
 
 void DPdfDocument::setPage()
@@ -123,5 +127,5 @@ void DPdfDocument::setPage()
         return;
     QSizeF pageSize = m_document->pageSize(m_pageNumber);
     m_page = m_document->render(m_pageNumber, pageSize.toSize());
-    emit pageChanged(m_page);
+    emit pageChanged();
 }

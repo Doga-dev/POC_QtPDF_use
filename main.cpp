@@ -4,6 +4,7 @@
 #include <QDebug>
 
 #include "d_pdf_document.h"
+#include "d_pdf_image.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterType<DPdfDocument>("myLib", 1, 0, "PdfDoc");
+    qmlRegisterType<DPdfImage>("myLib", 1, 0, "PdfImage");
 
 //    const QString filename("/home/doga/dev/demo_files/pdf/000000000002-20210120-154238-PV_OK.pdf");
 
