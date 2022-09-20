@@ -1,5 +1,7 @@
+
+#include <QtPdf/QtPdf>
+
 #include "d_pdf_document.h"
-#include "inc_pdf_doc.h"
 
 
 DPdfDocument::DPdfDocument(QObject * parent) : QObject(parent)

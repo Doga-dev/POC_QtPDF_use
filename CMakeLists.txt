@@ -34,7 +34,6 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Pdf REQUIRED)
 set(HEADER_FILES
     d_pdf_document.h
     d_pdf_image.h
-    inc_pdf_doc.h
 )
 
 set(SOURCE_FILES
