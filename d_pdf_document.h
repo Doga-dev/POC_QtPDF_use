@@ -56,9 +56,10 @@ public slots:
     void                goToPreviousPage    ()          {   setPageNumber(m_pageNumber - 1);    }
     void                goToNextPage        ()          {   setPageNumber(m_pageNumber + 1);    }
     void                goToLastPage        ()          {   setPageNumber(m_pageCount);         }
+    void                reset               ();
 
 signals:
-    void                statusChanged       (EnPdfDocumentStatus status);
+    void                statusChanged       (DPdfDocument::EnPdfDocumentStatus status);
     void                errorCodeChanged    ();
     void                pageCountChanged    (int pageCount);
     void                pageNumberChanged   (int pageNumber);

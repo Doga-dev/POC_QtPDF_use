@@ -1,4 +1,5 @@
 
+#include <QDebug>
 #include <QtPdf/QtPdf>
 
 #include "d_pdf_document.h"
@@ -88,6 +89,11 @@ void DPdfDocument::setPageNumber(int pageNumber)
     setPage();
 }
 
+void DPdfDocument::reset()
+{
+    close();
+}
+
 void DPdfDocument::setStatus(int status)
 {
     if (m_status == status)
@@ -96,6 +102,7 @@ void DPdfDocument::setStatus(int status)
     if (status == QPdfDocument::Error) {
         setErrorCode(m_document->error());
     }
+    //qDebug() << "Document status changed from" << m_status << "to" << static_cast<EnPdfDocumentStatus>(status);
     m_status = static_cast<EnPdfDocumentStatus>(status);
     emit statusChanged(m_status);
 }

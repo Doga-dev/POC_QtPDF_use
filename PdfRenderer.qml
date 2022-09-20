@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.12
 import QtQuick.Layouts 1.11
 import QtQuick.Controls 2.15
 
@@ -8,73 +8,51 @@ Rectangle {
     id: rootItem; objectName: "PdfRenderer"
     implicitWidth: 800
     implicitHeight: 600
-    color: "#ddeeff"
+    color: "transparent"
+
+    property string source: ""
+    property bool showButtons: true
+    property bool autoHideButtons: true
+    property bool showFilename: false
+
+    property bool error: (doc.errorCode !== 0)
+    property bool loaded: (doc.status === PdfDoc.CePdsReady)
+    property bool empty: (doc.status === PdfDoc.CePdsUnavailable)
+
+    onSourceChanged: {
+        //console.log("Renderer source changed to '" + source + "'.");
+        if (source.length === 0) {
+            doc.close();
+        } else {
+            doc.load(source);
+        }
+    }
+    function resetError() {
+        doc.reset();
+    }
 
     PdfDoc {
         id: doc
         onPageChanged: idPage.update();
     }
 
-    RowLayout {
+    PdfImage {
+        id: idPage
+        anchors.fill: parent
+        image: doc.page
+        smooth: true
+        visible: loaded
+    }
+
+    Row {
         id: idCommands
-        height: 96
-        anchors.left: parent.left
+        height: btGoToFirst.height
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.margins: 8
-
-        Rectangle {
-            id: itemFilename
-            Layout.fillWidth: true
-            height: parent.height
-            color: "transparent"
-
-            Label {
-                id: labelFilename
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.margins: 0
-                height: parent.height / 4
-                text: qsTr("Filename")
-                fontSizeMode: Text.HorizontalFit
-                minimumPixelSize: 8
-            }
-
-            TextInput {
-                id: textInputFilename
-                anchors.left: parent.left
-                anchors.top: labelFilename.bottom
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                text: "/home/doga/Downloads/testPdf12pages.pdf"
-                font.pixelSize: height / 2
-            }
-        }
-
-        Button {
-            id: btLoadClose
-            text: ((doc.status === PdfDoc.CePdsReady)
-                   ? qsTr("Close")
-                   : ((doc.status === PdfDoc.CePdsUnavailable)
-                      ? qsTr("Load")
-                      : qsTr("Reset")))
-            enabled: ((doc.status !== PdfDoc.CePdsLoading) || (doc.status === PdfDoc.CePdsUnloading))
-            onClicked: {
-                if (doc.status === PdfDoc.CePdsReady) {
-                    doc.close();
-                } else if (doc.status === PdfDoc.CePdsUnavailable) {
-                    doc.load(textInputFilename.text)
-                } else {
-                    // todo
-                }
-            }
-        }
-
-        Item {
-            id: idSeparator
-            height: parent.height
-            width: height / 2
-        }
+        spacing: 4
+        visible: rootItem.loaded && (doc.pageCount > 1)
+        opacity: 0.7
+        Behavior on opacity { NumberAnimation { duration: 500; }}
 
         Button {
             id: btGoToFirst
@@ -95,6 +73,8 @@ Rectangle {
             height: parent.height
             width: height
             text: (doc.pageNumber + 1) + " / " + doc.pageCount
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
         }
 
         Button {
@@ -112,17 +92,6 @@ Rectangle {
         }
     }
 
-    PdfImage {
-        id: idPage
-        anchors.left: parent.left
-        anchors.top: idCommands.bottom
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 8
-        image: doc.page
-        smooth: true
-    }
-
     Text {
         id: idErrMsg
         text: doc.errorMessage
@@ -130,7 +99,19 @@ Rectangle {
         horizontalAlignment: Qt.AlignHCenter
         verticalAlignment: Qt.AlignVCenter
         wrapMode: Text.Wrap
-        visible: (doc.errorCode !== 0)
+        visible: error
+    }
+
+    Text {
+        id: idFilename
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.margins: 8
+        height: parent.height / 16
+        text: source
+        fontSizeMode: Text.Fit
+        visible: showFilename
     }
 }
 

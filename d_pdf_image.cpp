@@ -7,6 +7,8 @@ DPdfImage::DPdfImage(QQuickItem * parent) : QQuickPaintedItem(parent)
 
 void DPdfImage::paint(QPainter * painter)
 {
+    if (m_current_image.isNull())
+        return;
     QRectF bounding_rect = boundingRect();
     QImage scaled = m_current_image.scaledToHeight(bounding_rect.height());
     QPointF center = bounding_rect.center() - scaled.rect().center();
