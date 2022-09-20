@@ -127,7 +127,7 @@ void DPdfDocument::setPage()
 {
     if ((! m_document) || (m_document->status() != QPdfDocument::Ready))
         return;
-    QSizeF pageSize = m_document->pageSize(m_pageNumber);
+    QSizeF pageSize = m_document->pageSize(m_pageNumber) * 2;
     m_page = m_document->render(m_pageNumber, pageSize.toSize());
     emit pageChanged();
 }
